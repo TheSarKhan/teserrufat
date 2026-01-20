@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESIDMS - Elektron Sənəd İdarəetmə Sistemi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6fa;
+            min-height: 100vh;
+        }
+
+        /* Auth Styles */
+        .auth-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .auth-box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #667eea;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.error {
+            background-color: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+            display: block;
+        }
+
+        .alert.success {
+            background-color: #efe;
+            color: #3c3;
+            border: 1px solid #cfc;
+            display: block;
+        }
+
+        .forgot-link {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .forgot-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 16px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        /* Main App Styles */
+        .app-container {
+            display: none;
+        }
+
+        .app-container.active {
+            display: block;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar h1 {
+            font-size: 22px;
+        }
+
+        .navbar-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logout-btn, .profile-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover, .profile-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-header h2 {
+            color: #2d3436;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            color: #636e72;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e1e8ed;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            color: #636e72;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead {
+            background: #f8f9fa;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        th {
+            font-weight: 600;
+            color: #2d3436;
+            font-size: 13px;
+        }
+
+        tbody tr {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .role-badge, .doc-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            margin: 20px;
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            color: #2d3436;
+            margin-bottom: 5px;
+        }
+
+        .modal-footer {
+            margin-top: 25px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #636e72;
+            font-size: 14px;
+        }
+
+        .shelves-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .shelf-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .shelf-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .shelf-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .shelf-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .shelf-info {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #f1f1f1;
+        }
+
+        .shelf-stat {
+            text-align: center;
+        }
+
+        .shelf-stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .shelf-stat-label {
+            font-size: 12px;
+            color: #636e72;
+            margin-top: 5px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .file-upload {
+            border: 2px dashed #ddd;
+            padding: 30px;
+            text-align: center;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: #667eea;
+            background: #f8f9fa;
+        }
+
+        .file-upload.has-file {
+            border-color: #27ae60;
+            background: #d4edda;
+        }
+
+        .file-info {
+            margin-top: 10px;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .search-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #636e72;
+        }
+
+        .breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .password-display {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 18px;
+            text-align: center;
+            border: 2px dashed #667eea;
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" class="auth-container">
+        <div class="auth-box">
+            <div class="logo">
+                <h1>ESIDMS</h1>
+                <p>Elektron Sənəd İdarəetmə Sistemi</p>
+            </div>
+
+            <div class="alert" id="loginAlert"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Şifrə</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+
+                <div class="forgot-link">
+                    <a href="#" onclick="showForgotPassword()">Şifrəmi unutdum</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Daxil ol</button>
+            </form>
+
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; font-size: 13px; color: #999;">
+                <strong>Test hesabları:</strong><br>
+                Admin: admin@test.az / admin123<br>
+                Kargüzar: karguza@test.az / karguza123<br>
+                İstifadəçi: user@test.az / user123
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL -->
+    <div id="adminPanel" class="app-container">
+        <div class="navbar">
+            <h1>ESIDMS - Admin Panel</h1>
+            <div class="navbar-right">
+                <div class="user-info">
+                    <span id="adminName"></span>
+                    <span style="opacity: 0.7">|</span>
+                    <span>Admin</span>
+                </div>
+                <button class="logout-btn" onclick="logout()">Çıxış</button>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="page-header">
+                <h2>İstifadəçi İdarəetməsi</h2>
+                <p>Sistemdəki istifadəçiləri idarə edin</p>
+            </div>
+
+            <div id="adminAlert"></div>
+
+            <div class="card">
+                <button class="btn btn-primary" onclick="openAddUserModal()">+ Yeni İstifadəçi</button>
+            </div>
+
+            <div class="card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ad Soyad</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Status</th>
+                            <th>Əməliyyatlar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- KARGUZA PANEL -->
+    <div id="karguzaPanel" class="app-container">
+        <div class="navbar">
+            <h1>ESIDMS - Kargüzar Panel</h1>
+            <div class="navbar-right">
+                <div class="user-info">
+                    <span id="karguzaName"></span>
+                    <span style="opacity: 0.7">|</span>
+                    <span>Kargüzar</span>
+                </div>
+                <button class="logout-btn" onclick="logout()">Çıxış</button>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="page-header">
+                <h2>Sənəd İdarəetməsi</h2>
+            </div>
+
+            <div id="karguzaAlert"></div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="kTotalDocs">0</div>
+                    <div class="stat-label">Ümumi Sənəd</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="kTodayDocs">0</div>
+                    <div class="stat-label">Bu gün</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="kTotalShelves">0</div>
+                    <div class="stat-label">Rəf sayı</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="kTotalTypes">0</div>
+                    <div class="stat-label">Sənəd növü</div>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchKarguzaTab('list')">Sənəd Siyahısı</button>
+                <button class="tab" onclick="switchKarguzaTab('add')">Yeni Sənəd</button>
+            </div>
+
+            <div class="tab-content active" id="kListTab">
+                <div class="card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nömrə</th>
+                                <th>Növ</th>
+                                <th>Başlıq</th>
+                                <th>Tarix</th>
+                                <th>Göndərən</th>
+                                <th>Yerləşmə</th>
+                                <th>Əməliyyatlar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="kDocumentsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-content" id="kAddTab">
+                <div class="card">
+                    <form id="addDocForm">
+                        <h3 style="margin-bottom: 25px;">Yeni Sənəd</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Sənədin Nömrəsi *</label>
+                                <input type="text" id="docNumber" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Növ *</label>
+                                <select id="docType" required>
+                                    <option value="">Seçin...</option>
+                                    <option value="məktub">Məktub</option>
+                                    <option value="arayış">Arayış</option>
+                                    <option value="ərizə">Ərizə</option>
+                                    <option value="kitab">Kitab</option>
+                                    <option value="jurnal">Jurnal</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Başlıq *</label>
+                            <input type="text" id="docTitle" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Qısa Məzmun *</label>
+                            <textarea id="docContent" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Qeyd</label>
+                            <textarea id="docNote"></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Tarix *</label>
+                                <input type="date" id="docDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Göndərən *</label>
+                                <input type="text" id="docSender" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Ünvanlanan *</label>
+                                <input type="text" id="docReceiver" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Yerləşmə (Rəf) *</label>
+                                <input type="text" id="docLocation" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Fayl (PDF, JPG) *</label>
+                            <div class="file-upload" id="fileUpload" onclick="document.getElementById('docFile').click()">
+                                <div>📄 Fayl seçin</div>
+                                <div class="file-info" id="fileInfo"></div>
+                            </div>
+                            <input type="file" id="docFile" accept=".pdf,.jpg,.png" style="display:none" onchange="handleFile(event)">
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn" onclick="resetDocForm()">Təmizlə</button>
+                            <button type="submit" class="btn btn-primary">Əlavə Et</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- USER PANEL -->
+    <div id="userPanel" class="app-container">
+        <div class="navbar">
+            <h1>ESIDMS - Sənəd Arxivi</h1>
+            <div class="navbar-right">
+                <div class="user-info">
+                    <span id="userName"></span>
+                </div>
+                <button class="logout-btn" onclick="logout()">Çıxış</button>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="breadcrumb" id="breadcrumb">
+                <a onclick="showShelves()">🏠 Ana səhifə</a>
+            </div>
+
+            <div id="shelvesView">
+                <div class="page-header">
+                    <h2>Sənəd Rəfləri</h2>
+                    <p>Sənədləri görmək üçün rəf seçin</p>
+                </div>
+
+                <div class="search-section">
+                    <div class="search-box">
+                        <input type="text" id="globalSearch" placeholder="Sənəd axtar...">
+                        <button class="btn btn-primary" onclick="globalSearch()">🔍 Axtar</button>
+                    </div>
+                </div>
+
+                <div class="shelves-grid" id="shelvesGrid"></div>
+            </div>
+
+            <div id="documentsView" class="hidden">
+                <div class="page-header">
+                    <h2 id="shelfTitle"></h2>
+                    <p id="shelfDesc"></p>
+                </div>
+
+                <div class="card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nömrə</th>
+                                <th>Növ</th>
+                                <th>Başlıq</th>
+                                <th>Tarix</th>
+                                <th>Göndərən</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userDocsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <div class="modal" id="addUserModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Yeni İstifadəçi</h3>
+            </div>
+            <form id="addUserForm">
+                <div class="form-group">
+                    <label>Ad</label>
+                    <input type="text" id="uFirstName" required>
+                </div>
+                <div class="form-group">
+                    <label>Soyad</label>
+                    <input type="text" id="uLastName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="uEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Rol</label>
+                    <select id="uRole" required>
+                        <option value="">Seçin...</option>
+                        <option value="karguza">Kargüzar</option>
+                        <option value="user">İstifadəçi</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="closeAddUserModal()">Ləğv et</button>
+                    <button type="submit" class="btn btn-primary">Əlavə et</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="passwordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Yaradılmış Şifrə</h3>
+                <p style="color:#999;font-size:14px">Bu şifrə yalnız indi göstərilir!</p>
+            </div>
+            <div class="password-display" id="genPassword"></div>
+            <button class="btn btn-primary" onclick="copyPassword()">📋 Kopyala</button>
+            <div class="modal-footer">
+                <button class="btn" onclick="closePasswordModal()">Bağla</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="docDetailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="detailTitle"></h3>
+            </div>
+            <div id="detailBody" style="line-height:1.8"></div>
+            <div class="modal-footer">
+                <button class="btn btn-success" onclick="downloadDoc()">📥 Yüklə</button>
+                <button class="btn" onclick="closeDocDetail()">Bağla</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global State
+        let currentUser = null;
+        let users = [
+            {id:1, firstName:'Admin', lastName:'İstifadəçi', email:'admin@test.az', role:'admin', password:'admin123', active:true},
+            {id:2, firstName:'Kargüzar', lastName:'İstifadəçi', email:'karguza@test.az', role:'karguza', password:'karguza123', active:true},
+            {id:3, firstName:'Sadə', lastName:'İstifadəçi', email:'user@test.az', role:'user', password:'user123', active:true}
+        ];
+        let nextUserId = 4;
+
+        let documents = [
+            {id:1, number:'DOC-001', type:'məktub', title:'Maliyyə Hesabatı', content:'2024 hesabatı', date:'2024-01-15', sender:'Maliyyə', receiver:'Direktor', location:'Rəf A-1', fileName:'doc1.pdf'},
+            {id:2, number:'DOC-002', type:'arayış', title:'İşçi Arayışı', content:'Əməkdaş arayışı', date:'2024-01-20', sender:'HR', receiver:'Əməkdaş', location:'Rəf A-1', fileName:'doc2.pdf'},
+            {id:3, number:'DOC-003', type:'ərizə', title:'Məzuniyyət', content:'Məzuniyyət ərizəsi', date:'2024-02-05', sender:'Əli Məmmədov', receiver:'HR', location:'Rəf B-2', fileName:'doc3.pdf'},
+            {id:4, number:'DOC-004', type:'kitab', title:'Protokollar', content:'İdarə heyəti protokolları', date:'2024-02-10', sender:'Katiblik', receiver:'Arxiv', location:'Rəf B-2', fileName:'doc4.pdf'}
+        ];
+        let nextDocId = 5;
+        let currentFile = null;
+        let currentShelf = null;
+        let genPass = '';
+
+        // LOGIN
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const user = users.find(u => u.email === email && u.password === password && u.active);
+            
+            if (user) {
+                currentUser = user;
+                document.getElementById('loginScreen').style.display = 'none';
+                
+                if (user.role === 'admin') {
+                    document.getElementById('adminPanel').classList.add('active');
+                    document.getElementById('adminName').textContent = user.firstName + ' ' + user.lastName;
+                    loadAdminUsers();
+                } else if (user.role === 'karguza') {
+                    document.getElementById('karguzaPanel').classList.add('active');
+                    document.getElementById('karguzaName').textContent = user.firstName + ' ' + user.lastName;
+                    document.getElementById('docDate').valueAsDate = new Date();
+                    loadKarguzaDocs();
+                    updateKarguzaStats();
+                } else {
+                    document.getElementById('userPanel').classList.add('active');
+                    document.getElementById('userName').textContent = user.firstName + ' ' + user.lastName;
+                    loadShelves();
+                }
+            } else {
+                const alert = document.getElementById('loginAlert');
+                alert.className = 'alert error';
+                alert.textContent = 'Email və ya şifrə yanlışdır!';
+            }
+        });
+
+        function logout() {
+            if (confirm('Çıxış etmək istədiyinizə əminsiniz?')) {
+                location.reload();
+            }
+        }
+
+        // ADMIN FUNCTIONS
+        function loadAdminUsers() {
+            const tbody = document.getElementById('usersTable');
+            tbody.innerHTML = '';
+            users.filter(u => u.role !== 'admin').forEach(u => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${u.firstName} ${u.lastName}</td>
+                        <td>${u.email}</td>
+                        <td><span class="role-badge">${u.role === 'karguza' ? 'Kargüzar' : 'İstifadəçi'}</span></td>
+                        <td><span class="status-badge ${u.active ? 'status-active' : 'status-inactive'}">${u.active ? 'Aktiv' : 'Deaktiv'}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm ${u.active ? 'btn-danger' : 'btn-success'}" onclick="toggleUser(${u.id})">${u.active ? 'Deaktiv' : 'Aktiv'}</button>
+                                <button class="btn btn-sm btn-warning" onclick="genNewPass(${u.id})">Yeni Şifrə</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteUser(${u.id})">Sil</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function openAddUserModal() {
+            document.getElementById('addUserModal').classList.add('active');
+        }
+
+        function closeAddUserModal() {
+            document.getElementById('addUserModal').classList.remove('active');
+            document.getElementById('addUserForm').reset();
+        }
+
+        document.getElementById('addUserForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newUser = {
+                id: nextUserId++,
+                firstName: document.getElementById('uFirstName').value,
+                lastName: document.getElementById('uLastName').value,
+                email: document.getElementById('uEmail').value,
+                role: document.getElementById('uRole').value,
+                password: generatePassword(),
+                active: true
+            };
+            
+            if (users.find(u => u.email === newUser.email)) {
+                showAlert('adminAlert', 'Bu email mövcuddur!', 'error');
+                return;
+            }
+
+            users.push(newUser);
+            genPass = newUser.password;
+            document.getElementById('genPassword').textContent = genPass;
+            document.getElementById('passwordModal').classList.add('active');
+            closeAddUserModal();
+            loadAdminUsers();
+            showAlert('adminAlert', 'İstifadəçi əlavə edildi!', 'success');
+        });
+
+        function generatePassword() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let pass = '';
+            for (let i = 0; i < 10; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
+            return pass;
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').classList.remove('active');
+            genPass = '';
+        }
+
+        function copyPassword() {
+            navigator.clipboard.writeText(genPass);
+            showAlert('adminAlert', 'Şifrə kopyalandı!', 'success');
+        }
+
+        function toggleUser(id) {
+            const user = users.find(u => u.id === id);
+            user.active = !user.active;
+            loadAdminUsers();
+            showAlert('adminAlert', `İstifadəçi ${user.active ? 'aktiv' : 'deaktiv'} edildi`, 'success');
+        }
+
+        function genNewPass(id) {
+            const user = users.find(u => u.id === id);
+            user.password = generatePassword();
+            genPass = user.password;
+            document.getElementById('genPassword').textContent = genPass;
+            document.getElementById('passwordModal').classList.add('active');
+            showAlert('adminAlert', 'Yeni şifrə yaradıldı', 'success');
+        }
+
+        function deleteUser(id) {
+            if (confirm('Bu istifadəçini silmək istədiyinizə əminsiniz?')) {
+                users = users.filter(u => u.id !== id);
+                loadAdminUsers();
+                showAlert('adminAlert', 'İstifadəçi silindi', 'success');
+            }
+        }
+
+        // KARGUZA FUNCTIONS
+        function switchKarguzaTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(tab === 'list' ? 'kListTab' : 'kAddTab').classList.add('active');
+        }
+
+        function loadKarguzaDocs() {
+            const tbody = document.getElementById('kDocumentsTable');
+            tbody.innerHTML = '';
+            if (documents.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:#999">Sənəd yoxdur</td></tr>';
+                return;
+            }
+            documents.forEach(d => {
+                tbody.innerHTML += `
+                    <tr onclick="showDocDetail(${d.id})">
+                        <td>${d.number}</td>
+                        <td><span class="doc-badge">${d.type}</span></td>
+                        <td>${d.title}</td>
+                        <td>${formatDate(d.date)}</td>
+                        <td>${d.sender}</td>
+                        <td>${d.location}</td>
+                        <td onclick="event.stopPropagation()">
+                            <button class="btn btn-sm btn-danger" onclick="deleteDoc(${d.id})">Sil</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function updateKarguzaStats() {
+            document.getElementById('kTotalDocs').textContent = documents.length;
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('kTodayDocs').textContent = documents.filter(d => d.date === today).length;
+            document.getElementById('kTotalShelves').textContent = new Set(documents.map(d => d.location)).size;
+            document.getElementById('kTotalTypes').textContent = new Set(documents.map(d => d.type)).size;
+        }
+
+        function handleFile(e) {
+            const file = e.target.files[0];
+            if (file) {
+                currentFile = file;
+                document.getElementById('fileUpload').classList.add('has-file');
+                document.getElementById('fileInfo').textContent = `✓ ${file.name}`;
+            }
+        }
+
+        document.getElementById('addDocForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!currentFile) {
+                showAlert('karguzaAlert', 'Fayl əlavə edin!', 'error');
+                return;
+            }
+            
+            const doc = {
+                id: nextDocId++,
+                number: document.getElementById('docNumber').value,
+                type: document.getElementById('docType').value,
+                title: document.getElementById('docTitle').value,
+                content: document.getElementById('docContent').value,
+                note: document.getElementById('docNote').value,
+                date: document.getElementById('docDate').value,
+                sender: document.getElementById('docSender').value,
+                receiver: document.getElementById('docReceiver').value,
+                location: document.getElementById('docLocation').value,
+                fileName: currentFile.name
+            };
+
+            documents.push(doc);
+            resetDocForm();
+            loadKarguzaDocs();
+            updateKarguzaStats();
+            showAlert('karguzaAlert', 'Sənəd əlavə edildi!', 'success');
+            switchKarguzaTab('list');
+            document.querySelectorAll('.tab')[0].classList.add('active');
+            document.querySelectorAll('.tab')[1].classList.remove('active');
+        });
+
+        function resetDocForm() {
+            document.getElementById('addDocForm').reset();
+            document.getElementById('docDate').valueAsDate = new Date();
+            currentFile = null;
+            document.getElementById('fileUpload').classList.remove('has-file');
+            document.getElementById('fileInfo').textContent = '';
+        }
+
+        function deleteDoc(id) {
+            if (confirm('Bu sənədi silmək istədiyinizə əminsiniz?')) {
+                documents = documents.filter(d => d.id !== id);
+                loadKarguzaDocs();
+                updateKarguzaStats();
+                showAlert('karguzaAlert', 'Sənəd silindi', 'success');
+            }
+        }
+
+        // USER FUNCTIONS
+        function loadShelves() {
+            const shelves = {};
+            documents.forEach(d => {
+                if (!shelves[d.location]) shelves[d.location] = [];
+                shelves[d.location].push(d);
+            });
+
+            const grid = document.getElementById('shelvesGrid');
+            grid.innerHTML = '';
+            
+            Object.keys(shelves).forEach(shelf => {
+                const docs = shelves[shelf];
+                grid.innerHTML += `
+                    <div class="shelf-card" onclick="showShelfDocs('${shelf}')">
+                        <div class="shelf-icon">📁</div>
+                        <div class="shelf-name">${shelf}</div>
+                        <div class="shelf-info">
+                            <div class="shelf-stat">
+                                <div class="shelf-stat-number">${docs.length}</div>
+                                <div class="shelf-stat-label">Sənəd</div>
+                            </div>
+                            <div class="shelf-stat">
+                                <div class="shelf-stat-number">${new Set(docs.map(d => d.type)).size}</div>
+                                <div class="shelf-stat-label">Növ</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function showShelfDocs(shelf) {
+            currentShelf = shelf;
+            const docs = documents.filter(d => d.location === shelf);
+            
+            document.getElementById('shelfTitle').textContent = shelf;
+            document.getElementById('shelfDesc').textContent = `${docs.length} sənəd`;
+            
+            const tbody = document.getElementById('userDocsTable');
+            tbody.innerHTML = '';
+            docs.forEach(d => {
+                tbody.innerHTML += `
+                    <tr onclick="showDocDetail(${d.id})">
+                        <td>${d.number}</td>
+                        <td><span class="doc-badge">${d.type}</span></td>
+                        <td>${d.title}</td>
+                        <td>${formatDate(d.date)}</td>
+                        <td>${d.sender}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('breadcrumb').innerHTML = `
+                <a onclick="showShelves()">🏠 Ana səhifə</a>
+                <span>›</span>
+                <span>${shelf}</span>
+            `;
+
+            document.getElementById('shelvesView').classList.add('hidden');
+            document.getElementById('documentsView').classList.remove('hidden');
+        }
+
+        function showShelves() {
+            currentShelf = null;
+            document.getElementById('breadcrumb').innerHTML = '<a onclick="showShelves()">🏠 Ana səhifə</a>';
+            document.getElementById('shelvesView').classList.remove('hidden');
+            document.getElementById('documentsView').classList.add('hidden');
+        }
+
+        function globalSearch() {
+            const term = document.getElementById('globalSearch').value.toLowerCase();
+            if (!term) {
+                alert('Axtarış mətni daxil edin');
+                return;
+            }
+            const results = documents.filter(d => 
+                d.number.toLowerCase().includes(term) || 
+                d.title.toLowerCase().includes(term) || 
+                d.type.includes(term)
+            );
+            if (results.length === 0) {
+                alert('Nəticə tapılmadı');
+                return;
+            }
+            showSearchResults(results, term);
+        }
+
+        function showSearchResults(results, term) {
+            document.getElementById('shelfTitle').textContent = 'Axtarış Nəticələri';
+            document.getElementById('shelfDesc').textContent = `"${term}" üçün ${results.length} nəticə`;
+            
+            const tbody = document.getElementById('userDocsTable');
+            tbody.innerHTML = '';
+            results.forEach(d => {
+                tbody.innerHTML += `
+                    <tr onclick="showDocDetail(${d.id})">
+                        <td>${d.number}</td>
+                        <td><span class="doc-badge">${d.type}</span></td>
+                        <td>${d.title}</td>
+                        <td>${formatDate(d.date)}</td>
+                        <td>${d.sender}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('breadcrumb').innerHTML = `
+                <a onclick="showShelves()">🏠 Ana səhifə</a>
+                <span>›</span>
+                <span>Axtarış: "${term}"</span>
+            `;
+
+            document.getElementById('shelvesView').classList.add('hidden');
+            document.getElementById('documentsView').classList.remove('hidden');
+        }
+
+        function showDocDetail(id) {
+            const doc = documents.find(d => d.id === id);
+            if (!doc) return;
+            
+            document.getElementById('detailTitle').textContent = doc.title;
+            document.getElementById('detailBody').innerHTML = `
+                <p><strong>Nömrə:</strong> ${doc.number}</p>
+                <p><strong>Növ:</strong> ${doc.type}</p>
+                <p><strong>Məzmun:</strong> ${doc.content}</p>
+                ${doc.note ? `<p><strong>Qeyd:</strong> ${doc.note}</p>` : ''}
+                <p><strong>Tarix:</strong> ${formatDate(doc.date)}</p>
+                <p><strong>Göndərən:</strong> ${doc.sender}</p>
+                <p><strong>Ünvanlanan:</strong> ${doc.receiver}</p>
+                <p><strong>Yerləşmə:</strong> ${doc.location}</p>
+                <p><strong>Fayl:</strong> ${doc.fileName}</p>
+            `;
+            document.getElementById('docDetailModal').classList.add('active');
+        }
+
+        function closeDocDetail() {
+            document.getElementById('docDetailModal').classList.remove('active');
+        }
+
+        function downloadDoc() {
+            alert('Fayl yüklənir... (Demo versiya)');
+        }
+
+        // HELPERS
+        function formatDate(d) {
+            return new Date(d).toLocaleDateString('az-AZ');
+        }
+
+        function showAlert(id, msg, type) {
+            const el = document.getElementById(id);
+            el.innerHTML = `<div class="alert ${type === 'error' ? 'error' : 'success'}">${msg}</div>`;
+            setTimeout(() => el.innerHTML = '', 4000);
+        }
+
+        function showForgotPassword() {
+            alert('Şifrə bərpa funksiyası demo versiyada mövcud deyil. Test hesabları ilə daxil ola bilərsiniz.');
+        }
+    </script>
+</body>
+</html>
