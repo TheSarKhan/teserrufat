@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import React from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { LayoutDashboard, Users, FileText, Search, ShieldAlert, LogOut, Menu } from 'lucide-react';
@@ -8,7 +7,7 @@ import { Button } from '../components/ui/button';
 
 export default function DashboardLayout() {
     const { user, logout, isLoading } = useAuth();
-    const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [sidebarOpen, setSidebarOpen] = React.useState(true);
 
     if (isLoading) return <div>Loading...</div>;
     if (!user) return <Navigate to="/login" />;

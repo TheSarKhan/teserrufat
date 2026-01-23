@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { type User, MOCK_USERS } from '../lib/mockData';
 
 interface AuthContextType {
@@ -18,7 +18,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Check local storage or session
         const storedUser = localStorage.getItem('agro_user');
         if (storedUser) {
-            setUser(JSON.parse(storedUser));
+            try {
+                setUser(JSON.parse(storedUser));
+            } catch (e) {
+                console.error("Failed to parse user from local storage", e);
+                localStorage.removeItem('agro_user');
+            }
         }
         setIsLoading(false);
     }, []);
